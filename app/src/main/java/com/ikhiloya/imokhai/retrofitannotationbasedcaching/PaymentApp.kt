@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import com.google.gson.GsonBuilder
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.NetworkInterceptor
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.OfflineCacheInterceptor
+import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.OfflineCacheInterceptorWithHeader
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.service.PaymentService
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.util.Constant.Companion.BASE_URL
 import okhttp3.Cache
@@ -52,6 +53,7 @@ class PaymentApp : Application() {
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         val networkInterceptor = NetworkInterceptor()
         val offlineCacheInterceptor = OfflineCacheInterceptor()
+        val offlineCacheInterceptorWithHeader = OfflineCacheInterceptorWithHeader()
 
 
         // OkHttpClient
@@ -59,7 +61,7 @@ class PaymentApp : Application() {
             .cache(cache())
             .addInterceptor(httpLoggingInterceptor)
             .addNetworkInterceptor(networkInterceptor) // only used when network is on
-            .addInterceptor(offlineCacheInterceptor)
+            .addInterceptor(offlineCacheInterceptorWithHeader)
             .build()
 
 

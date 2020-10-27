@@ -6,9 +6,15 @@ import com.ikhiloya.imokhai.retrofitannotationbasedcaching.util.Constant.Compani
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 
 interface PaymentService {
     @Cacheable
     @GET(PAYMENT_TYPES)
     fun getPaymentTypes(): Call<MutableList<PaymentType>>
+
+
+    @GET(PAYMENT_TYPES)
+    @Headers("Cacheable: true")
+    fun getPaymentTypesWithHeaders(): Call<MutableList<PaymentType>>
 }

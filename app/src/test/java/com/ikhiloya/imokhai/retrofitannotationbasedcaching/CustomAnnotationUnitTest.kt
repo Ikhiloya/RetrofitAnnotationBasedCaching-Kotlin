@@ -21,7 +21,9 @@ import timber.log.Timber
 import java.io.IOException
 
 class CustomAnnotationUnitTest {
-
+    /**
+     * Run when OfflineCacheInterceptor is used
+     */
     @Test(expected = NotFoundException::class)
     @Throws(Exception::class)
     fun testIfCustomAnnotationIsPresent() {
@@ -48,7 +50,7 @@ class CustomAnnotationUnitTest {
                             url.toString()
                         )
 
-                        /* get the RequiresCaching annotation from the request */
+                        /* get the Cacheable annotation from the request */
                         val invocation = request.tag(
                             Invocation::class.java
                         )
@@ -75,4 +77,59 @@ class CustomAnnotationUnitTest {
             retrofit.create(PaymentService::class.java)
         paymentService.getPaymentTypes().execute()
     }
+
+
+    /**
+     * Run when OfflineCacheInterceptorWithHeader is used
+     */
+    @Test(expected = NotFoundException::class)
+    @Throws(Exception::class)
+    fun testIfCustomHeaderIsPresent() {
+        val httpLoggingInterceptor = HttpLoggingInterceptor(
+            HttpLoggingInterceptor.Logger { message: String? -> Timber.i(message) }
+        )
+        httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        val networkInterceptor = NetworkInterceptor()
+
+        val client: OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .addNetworkInterceptor(networkInterceptor)
+            .addInterceptor(
+                object : OfflineCacheInterceptor() {
+                    @Throws(IOException::class)
+                    override fun intercept(chain: Interceptor.Chain): Response {
+                        val request: Request = chain.request()
+                        /* tes the request method */
+                        Assert.assertEquals("GET", request.method)
+                        val url = request.url
+                        /* Test the url */
+                        Assert.assertEquals(
+                            BASE_URL + PAYMENT_TYPES,
+                            url.toString()
+                        )
+
+                        /* get the RequiresCaching annotation from the request */
+                        val header = request.headers["Cacheable"]
+
+                        Assert.assertNotNull(header)
+                        Assert.assertEquals("true", header)
+
+                        // The following just ends the test with an expected exception.
+                        // You could construct a valid Response and return that instead
+                        // Do not return chain.proceed(), because then your unit test may become
+                        // subject to the whims of the network
+                        throw NotFoundException()
+                    }
+                })
+            .build()
+        val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+        val paymentService: PaymentService =
+            retrofit.create(PaymentService::class.java)
+        paymentService.getPaymentTypesWithHeaders().execute()
+    }
+
 }

@@ -77,46 +77,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun getPaymentTypes() {
         progressBar.visibility = View.VISIBLE
-        paymentService.getPaymentTypes().enqueue(object : Callback<MutableList<PaymentType>> {
-            override fun onFailure(call: Call<MutableList<PaymentType>>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                Timber.e(t, getString(R.string.error_occurred))
-            }
-
-            override fun onResponse(
-                call: Call<MutableList<PaymentType>>,
-                response: Response<MutableList<PaymentType>>
-            ) {
-
-                if (response.isSuccessful && response.body() != null
-                    && response.body()!!.isNotEmpty()
-                ) {
-                    if (response.raw().networkResponse != null) {
-                        Timber.i("onResponse: response is from NETWORK...")
-                        Toast.makeText(
-                            this@MainActivity,
-                            "onResponse: response is from NETWORK...",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else if (response.raw().cacheResponse != null
-                        && response.raw().networkResponse == null
-                    ) {
-                        Timber.i("onResponse: response is from CACHE...")
-                        Toast.makeText(
-                            this@MainActivity,
-                            "onResponse: response is from CACHE...",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    val data = response.body()
-                    Timber.i("Data from network%s", data!!.toString())
+        paymentService.getPaymentTypesWithHeaders()
+            .enqueue(object : Callback<MutableList<PaymentType>> {
+                override fun onFailure(call: Call<MutableList<PaymentType>>, t: Throwable) {
                     progressBar.visibility = View.GONE
-                    paymentTypes.clear()
-                    paymentTypes.addAll(data)
-                    paymentAdapter.notifyDataSetChanged()
+                    Timber.e(t, getString(R.string.error_occurred))
                 }
 
-            }
-        })
+                override fun onResponse(
+                    call: Call<MutableList<PaymentType>>,
+                    response: Response<MutableList<PaymentType>>
+                ) {
+
+                    if (response.isSuccessful && response.body() != null
+                        && response.body()!!.isNotEmpty()
+                    ) {
+                        if (response.raw().networkResponse != null) {
+                            Timber.i("onResponse: response is from NETWORK...")
+                            Toast.makeText(
+                                this@MainActivity,
+                                "onResponse: response is from NETWORK...",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else if (response.raw().cacheResponse != null
+                            && response.raw().networkResponse == null
+                        ) {
+                            Timber.i("onResponse: response is from CACHE...")
+                            Toast.makeText(
+                                this@MainActivity,
+                                "onResponse: response is from CACHE...",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                        val data = response.body()
+                        Timber.i("Data from network%s", data!!.toString())
+                        progressBar.visibility = View.GONE
+                        paymentTypes.clear()
+                        paymentTypes.addAll(data)
+                        paymentAdapter.notifyDataSetChanged()
+                    }
+
+                }
+            })
     }
 }
