@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">RetrofitAnnotationBasedCaching</string>
+    <string name="payment_types">Payment Types</string>
+    <string name="payment_type_cash">Cash</string>
+    <string name="network_unavailable_msg">no internet connection, please check and retry</string>
+    <string name="error_msg">Error occurred, please try again</string>
+    <string name="error_occurred">Error occurred, please try again</string>
+    <string name="refresh">Refresh</string>
+</resources>
