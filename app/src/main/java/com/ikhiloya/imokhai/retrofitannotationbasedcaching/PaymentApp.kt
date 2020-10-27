@@ -61,7 +61,7 @@ class PaymentApp : Application() {
             .cache(cache())
             .addInterceptor(httpLoggingInterceptor)
             .addNetworkInterceptor(networkInterceptor) // only used when network is on
-            .addInterceptor(offlineCacheInterceptorWithHeader)
+            .addInterceptor(offlineCacheInterceptor)
             .build()
 
 

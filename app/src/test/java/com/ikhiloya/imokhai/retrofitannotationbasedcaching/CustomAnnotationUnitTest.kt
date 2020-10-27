@@ -4,6 +4,7 @@ import android.content.res.Resources.NotFoundException
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.annotation.Cacheable
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.NetworkInterceptor
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.OfflineCacheInterceptor
+import com.ikhiloya.imokhai.retrofitannotationbasedcaching.interceptor.OfflineCacheInterceptorWithHeader
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.service.PaymentService
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.util.Constant.Companion.BASE_URL
 import com.ikhiloya.imokhai.retrofitannotationbasedcaching.util.Constant.Companion.PAYMENT_TYPES
@@ -95,7 +96,7 @@ class CustomAnnotationUnitTest {
             .addInterceptor(httpLoggingInterceptor)
             .addNetworkInterceptor(networkInterceptor)
             .addInterceptor(
-                object : OfflineCacheInterceptor() {
+                object : OfflineCacheInterceptorWithHeader() {
                     @Throws(IOException::class)
                     override fun intercept(chain: Interceptor.Chain): Response {
                         val request: Request = chain.request()
